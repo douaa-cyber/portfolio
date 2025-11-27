@@ -1,7 +1,12 @@
 import React from "react";
+import Hero from "./sections/hero";
 
 const App = () => {
-  return <h1>Welcome to my 3D portfolio</h1>;
+  return (
+    <>
+      <Hero />
+    </>
+  );
 };
 
 export default App;
