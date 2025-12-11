@@ -84,7 +84,7 @@ section {
     @apply relative z-10 xl:mt-20 mt-32 md:h-dvh h-[80vh] flex xl:items-center items-start justify-center;
   }
 
-  .hero-text {
+  /*  .hero-text {
     @apply flex flex-col justify-center md:text-[60px] text-[30px] font-semibold relative z-10 pointer-events-none;
     img {
       @apply size-8 md:size-10 object-contain;
@@ -92,7 +92,7 @@ section {
     .slide {
       @apply absolute pt-0 px-2 md:px-5 py-[30px] h-[48px] md:h-[78px] md:translate-y-1 translate-y-0 overflow-hidden;
     }
-  }
+  } */
 
   .hero-badge {
     @apply bg-black-200 py-2 px-4 rounded-full w-fit text-sm md:text-base text-nowrap;
@@ -322,8 +322,7 @@ section {
   }
 }
 
-/* Hero text slider starts */
-.slide {
+/* .slide {
   display: inline-block;
   flex-direction: column;
   transition: all cubic-bezier(0.71, 0.03, 0.34, 1);
@@ -360,7 +359,53 @@ section {
   87.5% {
     transform: translateY(-87.5%);
   }
+} */
+.hero-text {
+  @apply relative flex items-center gap-3 md:text-[60px] text-[30px] font-semibold xl:leading-[98px] 
+         md:leading-[86px] leading-[50px] pointer-events-none;
 }
+
+.slide {
+  position: relative;
+  height: 1.5em; /* FIXED HEIGHT = same as text height */
+  display: inline-block;
+  overflow: hidden;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  animation: slide-animation 15s cubic-bezier(0.71, 0.03, 0.34, 1) infinite;
+}
+
+@keyframes slide-animation {
+  0% {
+    transform: translateY(0.5%);
+  }
+  12.5% {
+    transform: translateY(-12.5%);
+  }
+  25% {
+    transform: translateY(-25%);
+  }
+  37.5% {
+    transform: translateY(-37.5%);
+  }
+  50% {
+    transform: translateY(-50%);
+  }
+  62.5% {
+    transform: translateY(-62.5%);
+  }
+  75% {
+    transform: translateY(-75%);
+  }
+  87.5% {
+    transform: translateY(-87.5%);
+  }
+}
+/* KEYFRAMES */
 
 /* Hero Text slider ends */
 

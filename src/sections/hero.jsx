@@ -1,5 +1,7 @@
 import React from "react";
 import { words } from "../../constants/index";
+import Button from "../components/Button";
+import HeroExperience from "../components/HeroModels/HeroExperience";
 const Hero = () => {
   return (
     <section id="hero" className="relative overflow-hidden">
@@ -10,7 +12,7 @@ const Hero = () => {
         {/* Left hero content */}
         <header className="flex flex-col justify-center md:w-full w-screen md:px-20 px-5">
           <div className="flex flex-col gap-7">
-            <h1>
+            <h1 className="hero-text relative">
               shaping
               <span className="slide">
                 <span className="wrapper">
@@ -31,14 +33,25 @@ const Hero = () => {
               </span>
             </h1>
 
-            <h1>into Real Projects</h1>
-            <h1>that Deliver Results</h1>
+            <h1 className="hero-text">into Real Projects</h1>
+            <h1 className="hero-text">that Deliver Results</h1>
           </div>
           <p className="text-white-50 md:text-xl relative z-10 pointer-events-none ">
             Hi , I'am douaa iam a software enginner based in algeria with a
             passion for coding.
           </p>
+          <Button
+            className="md:w-80 md:h-16 w-60 h-12"
+            id="button"
+            text="See my work"
+          />
         </header>
+        {/* Right 3D MODEL */}
+        <figure>
+          <div className="hero-3d-layout">
+            <HeroExperience />
+          </div>
+        </figure>
       </div>
     </section>
   );
