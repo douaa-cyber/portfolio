@@ -23,6 +23,9 @@ export default function Hero() {
   const cursorRef = useRef<HTMLDivElement>(null);
   const cursorDotRef = useRef<HTMLDivElement>(null);
 
+  // New ref for the sliding white highlight pill
+  const highlightRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       /* ── 1. ENTRANCE TIMELINE ── */
@@ -73,10 +76,25 @@ export default function Hero() {
         navLinks.forEach((l, i) => {
           const num = l.querySelector<HTMLElement>(".bn-num");
           if (i === index) {
-            gsap.to(l, { color: "#ffffff", duration: 0.35 });
+            // Text turns dark so it's readable on the white background fill
+            gsap.to(l, { color: "#041830", duration: 0.35 });
             if (num)
-              gsap.to(num, { color: "#00e5c8", opacity: 1, duration: 0.3 });
+              gsap.to(num, { color: "#0066ff", opacity: 1, duration: 0.3 });
+
+            // Slide the white highlight behind the active link
+            if (highlightRef.current && bottomNavRef.current) {
+              const navRect = bottomNavRef.current.getBoundingClientRect();
+              const linkRect = l.getBoundingClientRect();
+
+              gsap.to(highlightRef.current, {
+                x: linkRect.left - navRect.left,
+                width: linkRect.width,
+                duration: 0.4,
+                ease: "power3.out",
+              });
+            }
           } else {
+            // Inactive text remains white/transparent
             gsap.to(l, { color: "rgba(255,255,255,0.45)", duration: 0.35 });
             if (num)
               gsap.to(num, {
@@ -88,7 +106,8 @@ export default function Hero() {
         });
       };
 
-      activateLink(0); // default: About is active
+      // Slight delay on initial load to ensure layout measurements are correct
+      setTimeout(() => activateLink(0), 100);
 
       ScrollTrigger.create({
         trigger: "body",
@@ -162,16 +181,7 @@ export default function Hero() {
           scrub: 1.5,
         },
       });
-      gsap.to(sectionRef.current, {
-        opacity: 0.2,
-        ease: "none",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "65% top",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
+      // (Removed the opacity fade to 0.2 that was causing the name to disappear)
 
       /* ── 5. MOUSE PARALLAX + 3D TILT ── */
       const onMouseMove = (e: MouseEvent) => {
@@ -516,7 +526,7 @@ export default function Hero() {
 
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
-          50%       { transform: translateY(-22px); }
+          50%      { transform: translateY(-22px); }
         }
         .orb-wrap {
           width: 100%; height: 100%;
@@ -593,7 +603,10 @@ export default function Hero() {
           box-shadow: 0 8px 50px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04);
         }
 
-        /* Left logo circle — matches Carl's c.g circle pill */
+        /* Essential for stacking contexts so text stays above highlight */
+        .bn-logo-box, .bn-links { position: relative; z-index: 10; }
+
+        /* Left logo circle */
         .bn-logo-box {
           display: flex;
           align-items: center;
@@ -623,7 +636,7 @@ export default function Hero() {
         .bn-sep {
           color: rgba(255,255,255,0.35);
           font-size: 1.6rem;
-          margin: 0 35px;
+          margin: 0 25px;
           flex-shrink: 0;
           line-height: 1;
           display: flex;
@@ -638,17 +651,12 @@ export default function Hero() {
           text-transform: uppercase;
           color: rgba(255,255,255,0.9);
           cursor: none;
-          transition: color 0.2s;
           display: flex; align-items: center; gap: 8px;
           position: relative;
-          padding: 6px 0;
+          padding: 10px 24px; /* Added padding to make the white pill thicker behind it */
+          border-radius: 30px;
           white-space: nowrap;
         }
-        .bn-link:hover { color: var(--white); }
-
-        /* Active/scroll fill indicator */
-        .bn-link.active { color: var(--white); }
-        .bn-link.active .bn-num { opacity: 1; }
 
         .bn-num {
           font-family: 'Space Mono', monospace;
@@ -656,23 +664,21 @@ export default function Hero() {
           font-size: 1rem;
           font-weight: 700;
           letter-spacing: 0; 
-            margin-right: 2px;
-          transition: color 0.2s;
+          margin-right: 2px;
         }
         .bn-link:hover .bn-num { color: var(--teal); }
         .bn-link.active .bn-num { color: var(--teal); }
 
-        /* The scroll-fill highlight pill that slides */
+        /* The white sliding fill pill */
         .bn-highlight {
           position: absolute;
-          top: 50%; transform: translateY(-50%);
+          top: 6px; /* Matches bottom-nav padding to keep it centered vertically */
           height: calc(100% - 12px);
-          background: rgba(255,255,255,0.07);
+          background: #ffffff;
           border-radius: 40px;
-          border: 1px solid rgba(255,255,255,0.1);
           pointer-events: none;
-          transition: left 0.4s cubic-bezier(0.4,0,0.2,1), width 0.4s cubic-bezier(0.4,0,0.2,1);
-          z-index: -1;
+          z-index: 0; /* Placed behind the text */
+          left: 0;
         }
 
         /* ── CORNER ICONS ── */
@@ -828,6 +834,7 @@ export default function Hero() {
 
         {/* BOTTOM FLOATING NAVBAR */}
         <nav ref={bottomNavRef} className="bottom-nav">
+          <div ref={highlightRef} className="bn-highlight" />
           <div className="bn-logo-box">
             <span>D.A</span>
           </div>
