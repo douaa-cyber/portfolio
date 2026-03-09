@@ -8,34 +8,24 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
-  const navRef = useRef<HTMLElement>(null);
   const line1Ref = useRef<HTMLDivElement>(null);
   const line2Ref = useRef<HTMLDivElement>(null);
   const taglineRef = useRef<HTMLDivElement>(null);
   const disciplinesRef = useRef<HTMLDivElement>(null);
   const scrollHintRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
-  const bottomNavRef = useRef<HTMLElement>(null);
   const glow1Ref = useRef<HTMLDivElement>(null);
   const glow2Ref = useRef<HTMLDivElement>(null);
   const crossRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLButtonElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const cursorDotRef = useRef<HTMLDivElement>(null);
-  const highlightRef = useRef<HTMLDivElement>(null);
-  // NEW: scroll fill bar ref
-  const scrollFillRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       /* ── 1. ENTRANCE TIMELINE ── */
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      tl.fromTo(
-        navRef.current,
-        { y: -60, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.85 },
-      );
       tl.fromTo(
         line1Ref.current,
         { yPercent: 115, opacity: 0 },
@@ -60,98 +50,6 @@ export default function Hero() {
         { x: 0, opacity: 1, scale: 1, duration: 1.15, ease: "power2.out" },
         "-=1.0",
       );
-      tl.fromTo(
-        bottomNavRef.current,
-        { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.75, ease: "power2.out" },
-        "-=0.55",
-      );
-
-      /* ── SCROLL-ACTIVE NAV LINKS ── */
-      const navLinks = Array.from(
-        document.querySelectorAll<HTMLElement>(".bn-link"),
-      );
-
-      const activateLink = (index: number) => {
-        navLinks.forEach((l, i) => {
-          const num = l.querySelector<HTMLElement>(".bn-num");
-          if (i === index) {
-            gsap.to(l, { color: "#041830", duration: 0.35 });
-            if (num)
-              gsap.to(num, { color: "#0066ff", opacity: 1, duration: 0.3 });
-            if (highlightRef.current && bottomNavRef.current) {
-              const navRect = bottomNavRef.current.getBoundingClientRect();
-              const linkRect = l.getBoundingClientRect();
-              gsap.to(highlightRef.current, {
-                x: linkRect.left - navRect.left,
-                width: linkRect.width,
-                duration: 0.4,
-                ease: "power3.out",
-              });
-            }
-          } else {
-            gsap.to(l, { color: "rgba(255,255,255,0.45)", duration: 0.35 });
-            if (num)
-              gsap.to(num, {
-                color: "rgba(255,255,255,0.28)",
-                opacity: 0.7,
-                duration: 0.3,
-              });
-          }
-        });
-      };
-
-      // No link is active while on the hero — deactivate all on load
-      const deactivateAll = () => {
-        navLinks.forEach((l) => {
-          const num = l.querySelector<HTMLElement>(".bn-num");
-          gsap.to(l, { color: "rgba(255,255,255,0.45)", duration: 0.35 });
-          if (num)
-            gsap.to(num, {
-              color: "rgba(255,255,255,0.28)",
-              opacity: 0.7,
-              duration: 0.3,
-            });
-        });
-        // Shrink highlight pill to nothing
-        if (highlightRef.current)
-          gsap.to(highlightRef.current, { width: 0, duration: 0.3 });
-      };
-
-      setTimeout(() => deactivateAll(), 100);
-
-      // Hero zone — no active link
-      ScrollTrigger.create({
-        trigger: "body",
-        start: "top top",
-        end: "32% top",
-        onEnter: () => deactivateAll(),
-        onEnterBack: () => deactivateAll(),
-      });
-      // About (01) activates at ~32% scroll
-      ScrollTrigger.create({
-        trigger: "body",
-        start: "32% top",
-        end: "65% top",
-        onEnter: () => activateLink(0),
-        onEnterBack: () => activateLink(0),
-      });
-      // Stats (02)
-      ScrollTrigger.create({
-        trigger: "body",
-        start: "65% top",
-        end: "82% top",
-        onEnter: () => activateLink(1),
-        onEnterBack: () => activateLink(1),
-      });
-      // Work (03)
-      ScrollTrigger.create({
-        trigger: "body",
-        start: "82% top",
-        end: "100% bottom",
-        onEnter: () => activateLink(2),
-        onEnterBack: () => activateLink(2),
-      });
 
       /* ── 2. GLOWS BREATHE ── */
       gsap.to(glow1Ref.current, {
@@ -185,13 +83,17 @@ export default function Hero() {
       /* ── 4. SCROLL PARALLAX ── */
       gsap.to([line1Ref.current, line2Ref.current], {
         yPercent: -30,
+        opacity: 1,
         ease: "none",
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
           end: "bottom top",
           scrub: 1.2,
+          invalidateOnRefresh: true,
         },
+        overwrite: "auto",
+        immediateRender: false,
       });
       gsap.to(rightRef.current, {
         yPercent: 18,
@@ -267,65 +169,22 @@ export default function Hero() {
           });
           gsap.to(dot, { x: e.clientX, y: e.clientY, duration: 0.08 });
         });
-        document
-          .querySelectorAll("button, .bn-link, .c-icon, a")
-          .forEach((el) => {
-            el.addEventListener("mouseenter", () =>
-              gsap.to(ring, {
-                scale: 2.6,
-                borderColor: "#00e5c8",
-                duration: 0.3,
-              }),
-            );
-            el.addEventListener("mouseleave", () =>
-              gsap.to(ring, {
-                scale: 1,
-                borderColor: "rgba(255,255,255,0.42)",
-                duration: 0.3,
-              }),
-            );
-          });
-      }
-
-      /* ── 8. SCROLL FILL NAV BAR ── */
-      const fill = scrollFillRef.current;
-      if (fill) {
-        let scrollTimer: ReturnType<typeof setTimeout> | null = null;
-        let lastScrollY = window.scrollY;
-        let animFrame: number;
-
-        const updateFill = () => {
-          const maxScroll =
-            document.documentElement.scrollHeight - window.innerHeight;
-          const progress =
-            maxScroll > 0 ? Math.min(window.scrollY / maxScroll, 1) : 0;
-          // Width fills the entire nav
-          if (bottomNavRef.current) {
-            const navWidth = bottomNavRef.current.offsetWidth;
-            gsap.to(fill, {
-              width: navWidth * progress,
-              duration: 0.25,
-              ease: "power1.out",
-            });
-          }
-        };
-
-        const onScroll = () => {
-          lastScrollY = window.scrollY;
-          updateFill();
-
-          // Clear freeze timeout while scrolling
-          if (scrollTimer) clearTimeout(scrollTimer);
-
-          // When scroll stops, freeze fill where it is (do nothing — it's already frozen by GSAP)
-          scrollTimer = setTimeout(() => {
-            // intentionally empty — fill stays at current position
-          }, 150);
-        };
-
-        window.addEventListener("scroll", onScroll, { passive: true });
-        // Initial paint
-        updateFill();
+        document.querySelectorAll("button, .c-icon, a").forEach((el) => {
+          el.addEventListener("mouseenter", () =>
+            gsap.to(ring, {
+              scale: 2.6,
+              borderColor: "#00e5c8",
+              duration: 0.3,
+            }),
+          );
+          el.addEventListener("mouseleave", () =>
+            gsap.to(ring, {
+              scale: 1,
+              borderColor: "rgba(255,255,255,0.42)",
+              duration: 0.3,
+            }),
+          );
+        });
       }
 
       return () => window.removeEventListener("mousemove", onMouseMove);
@@ -377,20 +236,6 @@ export default function Hero() {
           Design × Development × Branding
         </div>
 
-        <nav ref={navRef} className="navbar">
-          <div className="nav-logo">
-            D<span>.</span>A
-          </div>
-          <div className="nav-right">
-            <button className="nav-sound" aria-label="Toggle sound">
-              ♪
-            </button>
-            <button ref={ctaRef} className="nav-cta">
-              Say Hello
-            </button>
-          </div>
-        </nav>
-
         <div className="content">
           <div className="left">
             <h1>
@@ -441,32 +286,6 @@ export default function Hero() {
             </div>
           ))}
         </div>
-
-        {/* BOTTOM FLOATING NAVBAR */}
-        <nav ref={bottomNavRef} className="bottom-nav">
-          {/* Scroll progress fill — sits BEHIND everything */}
-          <div ref={scrollFillRef} className="bn-scroll-fill" />
-
-          {/* Active section pill highlight */}
-          <div ref={highlightRef} className="bn-highlight" />
-
-          <div className="bn-logo-box">
-            <span>D.A</span>
-          </div>
-          <div className="bn-links">
-            <span className="bn-link" data-section="about">
-              <span className="bn-num">01.</span> About
-            </span>
-            <span className="bn-sep">✳︎</span>
-            <span className="bn-link" data-section="stats">
-              <span className="bn-num">02.</span> Stats
-            </span>
-            <span className="bn-sep">✳︎</span>
-            <span className="bn-link" data-section="work">
-              <span className="bn-num">03.</span> Work
-            </span>
-          </div>
-        </nav>
 
         <div className="ticker-wrap">
           <div className="ticker-inner">
