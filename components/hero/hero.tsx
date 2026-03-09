@@ -273,7 +273,7 @@ export default function Hero() {
             el.addEventListener("mouseenter", () =>
               gsap.to(ring, {
                 scale: 2.6,
-                borderColor: "var(--teal)",
+                borderColor: "#00e5c8",
                 duration: 0.3,
               }),
             );
@@ -336,17 +336,15 @@ export default function Hero() {
 
   return (
     <>
-  
-
       {/* ── CUSTOM CURSOR ── */}
       <div ref={cursorRef} className="cursor-ring" />
       <div ref={cursorDotRef} className="cursor-dot" />
 
-      <section ref={sectionRef} className="hero">
+      <section ref={sectionRef} className="hero section">
         <div className="grid-bg" />
         <div className="scanlines" />
-        <div ref={glow1Ref} className="glow-1" />
-        <div ref={glow2Ref} className="glow-2" />
+        <div ref={glow1Ref} className="glow-1 glow" />
+        <div ref={glow2Ref} className="glow-2 glow" />
 
         <div className="deco-squares">
           {[

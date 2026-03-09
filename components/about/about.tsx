@@ -100,9 +100,9 @@ export default function About() {
 
   return (
     <>
-      <section id="about" ref={sectionRef} className="about">
-        <div className="about-grid" />
-        <div className="about-scanlines" />
+      <section id="about" ref={sectionRef} className="about section">
+        <div className="grid-bg" />
+        <div className="scanlines" />
 
         <div className="about-deco-squares">
           {[
@@ -151,7 +151,7 @@ export default function About() {
         </div>
 
         <div className="about-content">
-          <div className="about-label">01 — About</div>
+          <div className="about-label label">01 — About</div>
 
           <div ref={titleRef} className="about-title">
             <div className="about-title-clip">
