@@ -88,11 +88,23 @@ export default function BottomNav({
 
       <div className="bn-links">
         {sections.map((sec, i) => (
-          <div key={sec} className="bn-link" data-section={sec}>
+          <a
+            key={sec}
+            href={`#${sec}`}
+            className="bn-link"
+            data-section={sec}
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById(sec)?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+            }}
+          >
             <span className="bn-num">{`0${i + 1}.`}</span>{" "}
             {sec.charAt(0).toUpperCase() + sec.slice(1)}
             {i < sections.length - 1 && <span className="bn-sep">✳︎</span>}
-          </div>
+          </a>
         ))}
       </div>
     </nav>

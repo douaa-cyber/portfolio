@@ -589,6 +589,7 @@ body {
   letter-spacing: 2.5px;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
   cursor: none;
   display: flex;
   align-items: center;
@@ -1510,4 +1511,70 @@ body {
   border-radius: 8px;
   background: linear-gradient(135deg, var(--teal), #0066ff);
   box-shadow: 0 0 30px rgba(0, 160, 255, 0.8);
+}
+
+/* ── SCROLL COMPANION (fixed glyphs that drift with scroll) ── */
+.scroll-companion {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  pointer-events: none;
+  overflow: hidden;
+}
+.scroll-companion-anchor {
+  position: absolute;
+  pointer-events: none;
+}
+.scroll-companion-anchor--left {
+  left: clamp(10px, 2.8vw, 40px);
+}
+.scroll-companion-anchor--right {
+  right: clamp(10px, 2.8vw, 40px);
+}
+.scroll-companion-anchor--mid {
+  left: 50%;
+  transform: translateX(-50%);
+}
+.scroll-companion-parallax {
+  display: inline-block;
+  will-change: transform, opacity;
+  transform-origin: center center;
+}
+.scroll-companion-icon {
+  display: inline-block;
+  font-family: var(--font-body), ui-monospace, monospace;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: rgba(0, 229, 200, 0.55);
+  text-shadow:
+    0 0 22px rgba(0, 229, 200, 0.35),
+    0 0 48px rgba(0, 102, 255, 0.12);
+  mix-blend-mode: screen;
+  animation: companionGlyphPulse 3.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-companion-icon {
+    animation: none;
+  }
+}
+@keyframes companionGlyphPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+    filter: blur(0px);
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+    filter: blur(0.3px);
+  }
+}
+@media (max-width: 640px) {
+  .scroll-companion-anchor--mid {
+    display: none;
+  }
+  .scroll-companion-icon {
+    opacity: 0.85;
+  }
 }

@@ -55,12 +55,67 @@ const PROJECTS = [
 
 export default function Projects() {
   const sectionRef = useRef<HTMLElement>(null);
+  const gridBgRef = useRef<HTMLDivElement>(null);
+  const counterRef = useRef<HTMLDivElement>(null);
+  const decoCrossRef = useRef<HTMLDivElement>(null);
+  const scrollHintRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
+    const mq = gsap.matchMedia();
     const ctx = gsap.context(() => {
+      mq.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.to(gridBgRef.current, {
+          yPercent: 12,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1,
+          },
+        });
+        gsap.to(counterRef.current, {
+          x: -24,
+          y: 16,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1.05,
+          },
+        });
+        gsap.to(decoCrossRef.current, {
+          y: -40,
+          rotation: 6,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1.2,
+          },
+        });
+        gsap.fromTo(
+          scrollHintRef.current,
+          { y: 0, opacity: 1 },
+          {
+            y: 10,
+            opacity: 0.4,
+            ease: "none",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 90%",
+              end: "center center",
+              scrub: 1,
+            },
+          },
+        );
+      });
+
       // Title reveal
       gsap.fromTo(
         titleRef.current,
@@ -130,16 +185,19 @@ export default function Projects() {
         });
       });
     }, sectionRef);
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      mq.revert();
+    };
   }, []);
 
   return (
     <>
       <section id="work" ref={sectionRef} className="projects-section section">
-        <div className="grid-bg" />
+        <div ref={gridBgRef} className="grid-bg" />
         <div className="scanlines" />
 
-        <div className="projects-counter">
+        <div ref={counterRef} className="projects-counter">
           <div className="projects-counter-num">04</div>
           <div className="projects-counter-label">Projects</div>
         </div>
@@ -193,10 +251,12 @@ export default function Projects() {
             ))}
           </div>
 
-          <div className="projects-scroll-hint">Scroll to explore projects</div>
+          <div ref={scrollHintRef} className="projects-scroll-hint">
+            Scroll to explore projects
+          </div>
         </div>
 
-        <div className="projects-deco-cross">
+        <div ref={decoCrossRef} className="projects-deco-cross">
           <div className="pdc-h" />
           <div className="pdc-v" />
           <div className="pdc-c" />

@@ -194,10 +194,15 @@ function TechCard({ tech }: { tech: (typeof STACK)[0] }) {
 
 export default function Stack() {
   const sectionRef = useRef<HTMLElement>(null);
+  const gridBgRef = useRef<HTMLDivElement>(null);
+  const counterRef = useRef<HTMLDivElement>(null);
+  const marqueeWrapRef = useRef<HTMLDivElement>(null);
+  const decoCrossRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const mq = gsap.matchMedia();
     const ctx = gsap.context(() => {
       gsap.fromTo(
         titleRef.current,
@@ -229,17 +234,120 @@ export default function Stack() {
           },
         },
       );
+
+      mq.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.to(gridBgRef.current, {
+          yPercent: 14,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1,
+          },
+        });
+        gsap.to(counterRef.current, {
+          x: 28,
+          y: -20,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1.1,
+          },
+        });
+        gsap.to(marqueeWrapRef.current, {
+          y: -32,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1.15,
+          },
+        });
+        gsap.to(decoCrossRef.current, {
+          y: 48,
+          rotation: -8,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1.2,
+          },
+        });
+      });
+
+      const row1 = sectionRef.current?.querySelector(
+        ".stack-marquee-wrap > .marquee-track:first-of-type",
+      );
+      const row2 = sectionRef.current?.querySelector(
+        ".stack-marquee-wrap > .marquee-track:last-of-type",
+      );
+      const cards1 = row1?.querySelectorAll(".stack-card");
+      const cards2 = row2?.querySelectorAll(".stack-card");
+      const firstSix = cards1
+        ? (Array.from(cards1).slice(0, 6) as HTMLElement[])
+        : [];
+      const secondFive = cards2
+        ? (Array.from(cards2).slice(0, 5) as HTMLElement[])
+        : [];
+
+      if (firstSix.length) {
+        gsap.fromTo(
+          firstSix,
+          { y: 36, opacity: 0, scale: 0.94 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.75,
+            stagger: 0.06,
+            ease: "back.out(1.35)",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 78%",
+              toggleActions: "play none none reverse",
+            },
+          },
+        );
+      }
+      if (secondFive.length) {
+        gsap.fromTo(
+          secondFive,
+          { y: 36, opacity: 0, scale: 0.94 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.75,
+            stagger: 0.07,
+            delay: 0.08,
+            ease: "back.out(1.35)",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 72%",
+              toggleActions: "play none none reverse",
+            },
+          },
+        );
+      }
     }, sectionRef);
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      mq.revert();
+    };
   }, []);
 
   return (
     <>
       <section id="stats" ref={sectionRef} className="stack-section section">
-        <div className="grid-bg" />
+        <div ref={gridBgRef} className="grid-bg" />
         <div className="scanlines" />
 
-        <div className="stack-counter">
+        <div ref={counterRef} className="stack-counter">
           <div className="stack-counter-num">11</div>
           <div className="stack-counter-label">Technologies</div>
         </div>
@@ -256,7 +364,7 @@ export default function Stack() {
         <div ref={lineRef} className="stack-divider" />
 
         {/* Two infinite marquee rows */}
-        <div className="stack-marquee-wrap">
+        <div ref={marqueeWrapRef} className="stack-marquee-wrap">
           {/* Row 1 → left */}
           <div className="marquee-track">
             <div className="marquee-inner row-ltr">
@@ -283,7 +391,7 @@ export default function Stack() {
         </div>
 
         {/* Deco cross */}
-        <div className="stack-deco-cross">
+        <div ref={decoCrossRef} className="stack-deco-cross">
           <div className="sdc-h" />
           <div className="sdc-v" />
           <div className="sdc-c" />
