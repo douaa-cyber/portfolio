@@ -499,9 +499,9 @@ function IdentityPanel({
 }) {
   const rows = [
     ["STATUS", "ONLINE", "#34d399"],
-    ["ROLE", "LEAD SYSTEM ARCHITECT", C.cyanDim],
+    ["ROLE", "Full Stack", C.cyanDim],
     ["LOCATION", "ALGIERS, DZ", C.cyanDim],
-    ["UPTIME", "06 YEARS", C.cyanDim],
+    ["UPTIME", "02 YEARS", C.cyanDim],
   ] as const;
   return (
     <div
@@ -726,6 +726,13 @@ function ProjectCard({
 
 // ─── Project modal ─────────────────────────────────────────────────────────────
 function ProjectModal({ project, tab, setTab, onClose, C, card, mono }: any) {
+  const [zoomed, setZoomed] = useState<string | null>(null);
+
+  // Reset zoom whenever the modal is closed or the project changes
+  useEffect(() => {
+    setZoomed(null);
+  }, [project]);
+
   if (!project) return null;
   return (
     <div
@@ -749,6 +756,8 @@ function ProjectModal({ project, tab, setTab, onClose, C, card, mono }: any) {
           ...card,
           width: "100%",
           maxWidth: 920,
+          maxHeight: "85vh",
+          overflowY: "auto",
           padding: 0,
           borderRadius: 28,
           border: "1px solid rgba(0,240,255,0.15)",
@@ -762,6 +771,12 @@ function ProjectModal({ project, tab, setTab, onClose, C, card, mono }: any) {
             alignItems: "flex-start",
             padding: "24px 28px",
             borderBottom: "1px solid rgba(255,255,255,0.06)",
+            position: "sticky",
+            top: 0,
+            background: "rgba(15,19,33,0.92)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            zIndex: 2,
           }}
         >
           <div>
@@ -826,6 +841,12 @@ function ProjectModal({ project, tab, setTab, onClose, C, card, mono }: any) {
           style={{
             display: "flex",
             borderBottom: "1px solid rgba(255,255,255,0.06)",
+            position: "sticky",
+            top: 89,
+            background: "rgba(15,19,33,0.92)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            zIndex: 2,
           }}
         >
           {(["gallery", "live"] as const).map((t) => (
@@ -878,12 +899,24 @@ function ProjectModal({ project, tab, setTab, onClose, C, card, mono }: any) {
                   key={i}
                   src={src}
                   alt={`${project.title} screenshot ${i + 1}`}
+                  onClick={() => setZoomed(src)}
                   style={{
                     width: "100%",
                     aspectRatio: "16/10",
                     objectFit: "cover",
                     borderRadius: 14,
                     border: "1px solid rgba(255,255,255,0.06)",
+                    cursor: "zoom-in",
+                    transition: "transform .25s ease, border-color .25s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "scale(1.02)";
+                    e.currentTarget.style.borderColor = "rgba(0,240,255,0.4)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "none";
+                    e.currentTarget.style.borderColor =
+                      "rgba(255,255,255,0.06)";
                   }}
                 />
               ))}
@@ -908,6 +941,65 @@ function ProjectModal({ project, tab, setTab, onClose, C, card, mono }: any) {
           )}
         </div>
       </div>
+
+      {/* Lightbox — full-size screenshot view */}
+      {zoomed && (
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            setZoomed(null);
+          }}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 300,
+            background: "rgba(0,0,0,0.92)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 40,
+          }}
+        >
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setZoomed(null);
+            }}
+            style={{
+              position: "absolute",
+              top: 24,
+              right: 24,
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              borderRadius: "50%",
+              width: 44,
+              height: 44,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+            }}
+          >
+            <span
+              className="material-symbols-outlined"
+              style={{ color: "#fff", fontSize: 22 }}
+            >
+              close
+            </span>
+          </button>
+          <img
+            src={zoomed}
+            alt="Zoomed screenshot"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: "100%",
+              maxHeight: "100%",
+              borderRadius: 12,
+              boxShadow: "0 20px 60px rgba(0,0,0,0.6)",
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -991,16 +1083,19 @@ export default function Home() {
   // ── Tous les projets — ajoute / modifie librement les entrées ci-dessous ────
   const projects = [
     {
-      title: "Neural_Dashboard",
-      desc: "Real-time brain-computer interface visualization engine.",
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAuSpfqlA01CStR_CCi2RN8LQcOe63e0T_79nZyujl6Ah85B-oFpE0XIDcrBbey4f430IzXQyM24IoEypSMSHRHLOnvaB3myPXu2534m9MoUXrxrAbOEo6zDJpw9iWbTlS-dxyen2CUZWsiWRifbgHX9dlVKCcIKnqpbzh5Am9xsyBQT_665e21VabtG_QhHTQbL0NDDZIut4RVl_LG7VdAw3RNb4v7rAiyEY3y8-W58dUjqAmX7g_RRwsfpILMSe5DNwVCGz4-3WNO",
+      title: "StockFlow",
+      desc: "A repair and inventory management system that tracks office equipment such as printers and scanners throughout the maintenance lifecycle. It records device information, repair reports, technician interventions, and generates delivery notes (Bon de Sortie) when equipment is returned to the customer.",
+      img: "/projects/stockflow/Capture.PNG", // Replace with your screenshot
       gallery: [
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuAuSpfqlA01CStR_CCi2RN8LQcOe63e0T_79nZyujl6Ah85B-oFpE0XIDcrBbey4f430IzXQyM24IoEypSMSHRHLOnvaB3myPXu2534m9MoUXrxrAbOEo6zDJpw9iWbTlS-dxyen2CUZWsiWRifbgHX9dlVKCcIKnqpbzh5Am9xsyBQT_665e21VabtG_QhHTQbL0NDDZIut4RVl_LG7VdAw3RNb4v7rAiyEY3y8-W58dUjqAmX7g_RRwsfpILMSe5DNwVCGz4-3WNO",
+        "/projects/stockflow/Capture.PNG",
+        "/projects/stockflow/Capture2.PNG",
+        "/projects/stockflow/Capture3.PNG",
+        "/projects/stockflow/Capture4.PNG",
       ],
-      liveUrl: "https://your-neural-dashboard-demo.vercel.app",
-      tags: ["THREE.JS", "WEBGL", "REACT"],
+      liveUrl: "",
+      tags: ["electronJs", "SqlLite", "Tailwind CSS"],
     },
-    {
+    /*  {
       title: "Crypt_Node",
       desc: "High-frequency distributed ledger management node.",
       img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCahP_pKKYNyGBj3t3lDAScMTFJsX8uCE6gun7Ig1NX0887Nf064ab7bne_AZTIWBDTX4DddRnFCkDQBYH_gLDqus5S3R3Cm0xgAbWnuDz-oAuPJ0yOqXfgKHp_0ra9Eyjn_kIZKeChZwAKGNEr7EbF5bu7hfjokgCNKyqLquYn-d7Sz5MJRJCVlZAqkWZ0jbom8YHobxjAmfSzsyF6S-MYG0NFz_cV92FRVtTiEkDJc1TzrZIoXNe3mhxe3l2VDV4YK_8R6JjmgbME",
@@ -1029,7 +1124,7 @@ export default function Home() {
       ],
       liveUrl: "https://your-pulse-analytics-demo.vercel.app",
       tags: ["REACT", "D3.JS", "POSTGRESQL"],
-    },
+    }, */
   ];
 
   const visibleProjects = showAllProjects ? projects : projects.slice(0, 2);
@@ -1426,8 +1521,8 @@ export default function Home() {
                 }}
               >
                 {[
-                  ["24+", "Projects_Deployed", 0],
-                  ["06", "Years_Experience", 120],
+                  ["04+", "Projects_Deployed", 0],
+                  ["02", "Years_Experience", 120],
                 ].map(([v, l, delay]) => (
                   <div
                     key={String(l)}
@@ -1793,8 +1888,8 @@ export default function Home() {
                   {[
                     [
                       "mail",
-                      "terminal@douaa.tech",
-                      "mailto:terminal@douaa.tech",
+                      "douag892@gmail.com",
+                      "mailto:douag892@gmail.com",
                     ],
                     ["alternate_email", "@douaa_agraine", "#"],
                   ].map(([icon, text, href]) => (
